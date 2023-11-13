@@ -15,3 +15,13 @@ English, so at least we need different embeddings for the multilingual embedding
 Moreover there are better purely english models available (the chosen model is faster).
 Finally it looks like only the first 128 tokens were used to create the embeddings.
 Using the maximum possible 512 tokens should give better results. 
+
+## Choosing an embedding model
+I checked the [MTEB Leaderboard](https://huggingface.co/spaces/mteb/leaderboard),
+looking at the subset of models that has 'multilingual' in the name. The best performing
+models for the Semantic Text Similarity (STS) category were:
+- https://huggingface.co/intfloat/multilingual-e5-large with 1024-D vectors
+- https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2 with 768-D vectors
+- https://huggingface.co/intfloat/multilingual-e5-small with 384-D vectors
+Here I ignored models that were not open source, or at first sight not compatible with
+the sentence_transformers package, or that only support a small set of languages.
