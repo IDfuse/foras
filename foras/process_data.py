@@ -154,7 +154,8 @@ if __name__ == "__main__":
 
     # MODEL_NAME = "intfloat/multilingual-e5-large"
     # PREFIX = "query: "
-    # # Doesn't fit on my local GPU.
+    # # Takes ~21h for a single part file of ~850MB. 
+    # # Needed to lower encode batch_size to 16.
     # MODEL_NAME = "sentence-transformers/paraphrase-multilingual-mpnet-base-v2"
     # PREFIX = None
     # # Takes ~9h for a single part file of ~850MB

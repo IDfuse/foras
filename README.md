@@ -25,3 +25,7 @@ models for the Semantic Text Similarity (STS) category were:
 - https://huggingface.co/intfloat/multilingual-e5-small with 384-D vectors
 Here I ignored models that were not open source, or at first sight not compatible with
 the sentence_transformers package, or that only support a small set of languages.
+
+In local testing, processing with the smallest model took ~3h per file of 850MB,
+the medium model ~9h and for the largest model I had to lower the encoding batch size,
+when the process would take ~21h.
