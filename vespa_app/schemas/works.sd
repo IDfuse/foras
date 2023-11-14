@@ -1,0 +1,20 @@
+schema works {
+    document works {
+        field id type string {
+            indexing: summary | index
+        }
+
+        field embedding type tensor<bfloat16>(x[384]) {
+            indexing: index | summary | attribute
+            attribute {
+                distance-metric: euclidean
+            }
+            index {
+                hnsw {
+                    max-links-per-node: 16
+                    neighbors-to-explore-at-insert: 200
+                }
+            }
+        }
+    }
+}
