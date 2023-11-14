@@ -132,14 +132,21 @@ def construct_abstract(
 class SentenceTransformerWithPrefix(SentenceTransformer):
     """Wrapper around a sentence transformers model that prefixes texts by a common
     prefix before passing them to encode. If prefix=None, the behavior is the same as a
-    normal sentence_transformers model."""
+    normal sentence_transformers model.
+    
+    Example
+    -------
+    The model `intfloat/multilingual-e5-small` expects the input texts to have the
+    prefix 'query: '. The model card states that performance is worse if this prefix is
+    not added.
+    """
 
     prefix = None
 
     def set_prefix(self, prefix: str) -> None:
         self.prefix = prefix
 
-    def encode(self, sentences, prefix=None, **kwargs):
+    def encode(self, sentences, **kwargs):
         if self.prefix is not None:
             sentences = [self.prefix + sentence for sentence in sentences]
         return super().encode(sentences=sentences, **kwargs)
