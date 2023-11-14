@@ -1,0 +1,12 @@
+version: "3.1"
+services:
+  vespa:
+    image: vespaengine/vespa:${VESPA_VERSION}
+    volumes:
+      - ${MOUNT_DIR}/var:/opt/vespa/var/
+      - ${MOUNT_DIR}/logs:/opt/vespa/logs/
+      - ${DATA_DIR}:/srv/data
+      - ./vespa_app:/srv/app
+    ports:
+      - ${PORT}:8080 
+      - ${ADMIN_PORT}:19071
