@@ -42,3 +42,9 @@ when the process would take ~21h.
 - Run `docker exec vespa vespa deploy /srv/app`. This will deploy the database.
 
 Now the database is ready for feeding or querying.
+
+## Size of the vectorized dataset.
+Total records in OpenAlex: 246M
+Records with publication_year >= 2015: 85M
+Records with abstract: 126M
+Records with abstract and publication_year >= 2015: 49M
