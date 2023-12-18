@@ -1,10 +1,13 @@
 import logging
+import os
 from pathlib import Path
 
+from dotenv import load_dotenv
 import numpy as np
 import pandas as pd
 from sentence_transformers import SentenceTransformer
 
+load_dotenv()
 logging.basicConfig(level=logging.INFO)
 OA_PREFIX = "https://openalex.org/"
 
@@ -16,9 +19,9 @@ class EmptyDataFrameError(Exception):
 def process_works(
     fp: Path,
     save_dir: Path,
-    embedding_save_dir: Path,
     model: SentenceTransformer,
     chunksize: int,
+    encoding_batch_size: int = 32,
 ) -> None:
     df_list = []
     embedding_list = []
@@ -35,41 +38,41 @@ def process_works(
     ):
         logging.info(f"Processing chunk {idx}")
         try:
-            processed_df, embeddings = process_chunk(df=df, model=model)
+            processed_df, embeddings = process_chunk(
+                df=df,
+                model=model,
+                encoding_batch_size=encoding_batch_size,
+            )
         except EmptyDataFrameError:
             continue
         df_list.append(processed_df)
         embedding_list.append(embeddings)
 
+    if not df_list:
+        raise EmptyDataFrameError
     df = pd.concat(df_list)
     if df.empty:
         raise EmptyDataFrameError
     embeddings = np.vstack(embedding_list)
+    df["embedding"] = embeddings.tolist()
 
     # Replace all missing values by None instead of other Pandas missing formats.
     df.replace(float("nan"), None, inplace=True)
 
     updated_date = fp.parent.stem.split("=")[-1]
     part_nr = fp.stem.split("_")[-1]
-    text_save_fp = Path(save_dir, f"text_data_{updated_date}_{part_nr}.csv")
+    data_save_fp = Path(save_dir, f"data_{updated_date}_{part_nr}.parquet")
     embedding_save_fp = Path(
-        embedding_save_dir, f"embeddings_{updated_date}_{part_nr}.npy"
+        save_dir, f"embeddings_{updated_date}_{part_nr}.parquet"
     )
-
-    # It might be worth it to put it in a different format that is better suited for
-    # dealing with large quantities of numpy array data. For example, there is
-    # `numpy.savez_compressed``, and Huggingface Datasets uses Arrow Parquet files in
-    # the background. Depending on where we want to put the data it might need to be
-    # very small, or easy to read from disk, or easy to append to / read in chunks.
-    df.to_csv(
-        text_save_fp,
-        index=False,
+    df[["id", "title", "abstract", "publication_year"]].to_parquet(
+        data_save_fp,
     )
-    np.save(embedding_save_fp, embeddings)
+    df[["id", "embedding"]].to_parquet(embedding_save_fp)
 
 
 def process_chunk(
-    df: pd.DataFrame, model: SentenceTransformer
+    df: pd.DataFrame, model: SentenceTransformer, encoding_batch_size: int = 32,
 ) -> tuple[pd.DataFrame, np.ndarray]:
     """Process one dataframe of OpenAlex data.
 
@@ -92,16 +95,16 @@ def process_chunk(
     df["abstract"] = df.abstract_inverted_index.apply(construct_abstract)
     df = df.loc[df.title.notnull() | df.abstract.notnull()]
     df.loc[:, "id"] = df.id.str.removeprefix(OA_PREFIX)
-    texts = (df.title.fillna("") + " " + df.abstract.fillna("")).to_list()
-    embeddings = model.encode(texts, show_progress_bar=True)
-    used_columns = ["id", "title", "abstract"]
+    texts = (df.title.fillna("").astype(str) + " " + df.abstract.fillna("").astype(str)).to_list()
+    embeddings = model.encode(texts, show_progress_bar=True, batch_size=encoding_batch_size)
+    used_columns = ["id", "title", "abstract", "publication_year"]
     df = df[used_columns]
     return df, embeddings
 
 
 def construct_abstract(
-    abstract_inverted_index: dict[str, list[int]] | None
-) -> str | None:
+    abstract_inverted_index #: dict[str, list[int]] | None
+): # -> str | None:
     """Construct an abstract from an abstract inverted index.
 
     Parameters
@@ -153,8 +156,8 @@ class SentenceTransformerWithPrefix(SentenceTransformer):
 
 
 if __name__ == "__main__":
-    data_dir = Path(Path.cwd(), "data", "source_data")
-    save_dir = Path(Path.cwd(), "data", "processed_data")
+    data_dir = Path(os.environ["DATA_DIR"], "openalex", "source_data", "updated_date=2023-10-20", "data", "works")
+    save_dir = Path(os.environ["DATA_DIR"], "openalex", "foras", "updated_date=2023-10-20")
     if not save_dir.exists():
         logging.info(f"Making directory {save_dir}")
         save_dir.mkdir(parents=True)
@@ -184,22 +187,22 @@ if __name__ == "__main__":
     # more important than the slight decrease in model performance.
     model.max_seq_length = 512
 
-    embedding_save_dir = Path(save_dir, MODEL_NAME.replace("/", "__"))
-    if not embedding_save_dir.exists():
-        logging.info(f"Making directory {embedding_save_dir}")
-        embedding_save_dir.mkdir(parents=True)
+    save_dir = Path(save_dir, MODEL_NAME.replace("/", "__"))
+    if not save_dir.exists():
+        logging.info(f"Making directory {save_dir}")
+        save_dir.mkdir(parents=True)
 
     for fp in sorted(
-        data_dir.glob("*/part_*.gz"), key=lambda x: (x.parent.stem, x.stem)
+        data_dir.glob(pattern="*/part_*.gz"), key=lambda x: (x.parent.stem, x.stem)
     ):
         logging.info(f"Processing {str(fp)}")
         try:
             process_works(
                 fp=fp,
                 save_dir=save_dir,
-                embedding_save_dir=embedding_save_dir,
                 model=model,
                 chunksize=CHUNKSIZE,
+                encoding_batch_size=256,
             )
         except EmptyDataFrameError:
             logging.warning(f"File {fp} does not contain rows with title or abstract")

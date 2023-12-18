@@ -1,8 +1,11 @@
 import logging
+import os
 from pathlib import Path
 
+from dotenv import load_dotenv
 import requests
 
+load_dotenv()
 logging.basicConfig(level=logging.INFO)
 
 
@@ -88,7 +91,7 @@ def get_fp_from_url(url: str, save_dir: Path) -> Path:
 
 
 if __name__ == "__main__":
-    save_dir = Path(Path.cwd(), "data", "source_data")
+    save_dir = Path(os.environ["DATA_DIR"], "source_data")
     if not save_dir.exists():
         logging.info(f"Making directory {save_dir}")
         save_dir.mkdir(parents=True)
