@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <services version="1.0">
     <container id="default" version="1.0">
+        <accesslog type="disabled"/>
         <document-api/>
         <search/>
         <nodes>

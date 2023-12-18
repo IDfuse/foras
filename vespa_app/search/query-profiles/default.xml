@@ -1,0 +1,3 @@
+<query-profile id="default">
+    <field name="maxHits">5000</field>
+</query-profile>
