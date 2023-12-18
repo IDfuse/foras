@@ -39,7 +39,7 @@ when the process would take ~21h.
     - `MOUNT_DIR`: There will be two directories mounted on the container, `$MOUNT_DIR/var` and `$MOUNT_DIR/logs`, which will contain the database and the database logs.
     - `VESPA_VERSION`: Which version of Vespa to use.
 - From the root of the repository run `docker-compose up -d`. This starts the container.
-- Run `docker exec vespa vespa deploy /srv/app`. This will deploy the database.
+- Run `docker exec foras-vespa-1 vespa deploy /srv/app`. This will deploy the database.
 
 Now the database is ready for feeding or querying.
 
@@ -48,6 +48,9 @@ Total records in OpenAlex: 246M
 Records with publication_year >= 2015: 85M
 Records with abstract: 126M
 Records with abstract and publication_year >= 2015: 49M
+
+## Feeding
+To feed the identifiers and embeddings to the application, set the `VESPA_IP` environment variable in `.env` and run `python foras/feed_data.py`.
 
 ## Getting the original dataset
 - `python -m synergy_dataset get -d van_de_Schoot_2018 -o $DATA_DIR/synergy -v 'doi,title,abstract,id` and say yes to converting inverted abstract to plaintext. Here `$DATA_DIR` should be be replaced by the same path as in `.env`.
