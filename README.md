@@ -48,3 +48,29 @@ Total records in OpenAlex: 246M
 Records with publication_year >= 2015: 85M
 Records with abstract: 126M
 Records with abstract and publication_year >= 2015: 49M
+
+## Getting the original dataset
+- `python -m synergy_dataset get -d van_de_Schoot_2018 -o $DATA_DIR/synergy -v 'doi,title,abstract,id` and say yes to converting inverted abstract to plaintext. Here `$DATA_DIR` should be be replaced by the same path as in `.env`.
+
+## Citations dataset
+The script `find_citations.py` can be used to get a dataset containing the works in OpenAlex that directly reference one of the included records in the original dataset, or the works that reference one of the directly referencing works. It needs two variables from the `.env` file:
+- `DATA_DIR`: The directory where to put the dataset. It will end up at `$DATA_DIR/citations.csv`.
+- `OPENALEX_EMAIL`: Optional, used in `find_citations.py`. Email adress to send along with API calls to OpenAlex. See: https://docs.openalex.org/how-to-use-the-api/rate-limits-and-authentication#the-polite-pool
+
+The dataset has the columns:
+- `id`: OpenAlex identifier.
+- `doi`
+- `title`
+- `abstract`
+- `referenced_works`: List of OpenAlex identifiers.
+- `publication_date`
+- `level`: Can have two values:
+    - `primary`: Directly references one of the included works of the original dataset.
+    - `secondary`: References one of the works in the set of primary records.
+
+For the `van_de_Schoot_2018` dataset this gives the following numbers at the time of writing (2023-18-12):
+
+|        | Total | Primary | Secondary |
+|--------|-------|---------|-----------|
+| All    | 9016  | 465     | 8551      |
+| >=2015 | 8682  | 451     | 8231      |
