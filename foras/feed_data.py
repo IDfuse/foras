@@ -8,9 +8,20 @@ from vespa.application import Vespa
 from vespa.io import VespaResponse
 
 load_dotenv()
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)15s - %(levelname)-8s - %(message)s"
-)
+
+formatter = logging.Formatter("%(asctime)15s - %(levelname)-8s - %(message)s")
+base_handler = logging.StreamHandler()
+base_handler.setFormatter(formatter)
+base_handler.setLevel(logging.INFO)
+error_handler = logging.FileHandler(os.environ.get("FEED_LOG_FP", "feed.log"))
+error_handler.setFormatter(formatter)
+error_handler.setLevel(logging.ERROR)
+logger = logging.getLogger("feed")
+logger.setLevel(logging.INFO)
+logger.addHandler(base_handler)
+logger.addHandler(error_handler)
+
+
 MODEL_NAME = "intfloat/multilingual-e5-small"
 data_dir = Path(
     os.environ["DATA_DIR"],
@@ -23,7 +34,7 @@ app = Vespa(url=f"http://{os.environ['VESPA_IP']}", port=os.environ["PORT"])
 
 def feeding_callback(response: VespaResponse, id: str) -> None:
     if not response.is_successful():
-        logging.error(
+        logger.error(
             f"Failed to feed document {id} with status code"
             f" {response.status_code}: Reason {response.get_json()}"
         )
@@ -42,7 +53,7 @@ for embeddings_fp in sorted(
     data_dir.glob("embeddings_*.parquet"), key=lambda x: x.stem
 ):
     part_nr = embeddings_fp.stem.replace("embeddings_", "")
-    logging.info(f"Feeding {part_nr}")
+    logger.info(f"Feeding {part_nr}")
     metadata_fp = Path(data_dir, f"data_{part_nr}.parquet")
     embeddings = pd.read_parquet(embeddings_fp)
     metadata = pd.read_parquet(metadata_fp)
@@ -50,6 +61,8 @@ for embeddings_fp in sorted(
         [embeddings[["id", "embedding"]], metadata["publication_year"]], axis=1
     )
     dataset = dataset[dataset.publication_year >= 2015][["id", "embedding"]]
+    if len(dataset) == 0:
+        continue
     dataset["embedding"] = dataset.embedding.apply(lambda x: x.tolist())
     app.feed_iterable(
         iter=data_generator(dataset),
@@ -57,4 +70,4 @@ for embeddings_fp in sorted(
         callback=feeding_callback,
     )
     total += len(dataset)
-    logging.info(f"Number of document fed: {len(dataset)}. Total: {total}")
+    logger.info(f"Number of document fed: {len(dataset)}. Total: {total}")
