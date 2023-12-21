@@ -31,14 +31,14 @@ the medium model ~9h and for the largest model I had to lower the encoding batch
 when the process would take ~21h.
 
 ## Starting the application
-- Make sure that Docker is istalled. 
+- Make sure that Docker is installed
 - Create a file `.env` in the root of the repository and copy the contents of `.env.example`. Fill in the desired values. 
     - `PORT`: Port on which the database will listen to queries.
     - `ADMIN_PORT`: Port where the database listens to admin operations.
     - `DATA_DIR`: This directory will be used to store the data downloaded from OpenAlex and the files created after processing this data.
-    - `MOUNT_DIR`: There will be two directories mounted on the container, `$MOUNT_DIR/var` and `$MOUNT_DIR/logs`, which will contain the database and the database logs.
+    - `MOUNT_DIR`: This can be the absolute path to the `mount` directory in this repository, or any other preferred directory. There will be two directories mounted on the container, `$MOUNT_DIR/var` and `$MOUNT_DIR/logs`, which will contain the database and the database logs. Make sure this directory is owned by user/group `1000:1000`.
     - `VESPA_VERSION`: Which version of Vespa to use.
-- From the root of the repository run `docker-compose up -d`. This starts the container.
+- From the root of the repository run `docker compose up -d`. This starts the container.
 - Run `docker exec foras-vespa-1 vespa deploy /srv/app`. This will deploy the database.
 
 Now the database is ready for feeding or querying.
