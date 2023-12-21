@@ -70,6 +70,7 @@ In short, what the script does is:
 - For each of the included works, collect all works in OpenAlex that reference to it, and mark them as `primary`.
 - For each of the primary records, collect all works in OpenAlex that reference to it, and mark them as `secondary`.
 - Combine this into a single CSV file.
+- Deduplicate based on the OpenAlex identifier and remove all records that were already present in the original dataset.
 
 This CSV file has the columns:
 - `id`: OpenAlex identifier.
