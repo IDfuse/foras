@@ -56,11 +56,22 @@ To feed the identifiers and embeddings to the application, set the `VESPA_IP` en
 - `python -m synergy_dataset get -d van_de_Schoot_2018 -o $DATA_DIR/synergy -v 'doi,title,abstract,id` and say yes to converting inverted abstract to plaintext. Here `$DATA_DIR` should be be replaced by the same path as in `.env`.
 
 ## Citations dataset
-The script `find_citations.py` can be used to get a dataset containing the works in OpenAlex that directly reference one of the included records in the original dataset, or the works that reference one of the directly referencing works. It needs two variables from the `.env` file:
+The script `foras/find_citations.py` can be used to get a dataset containing the works in OpenAlex that directly reference one of the included records in the original dataset, or the works that reference one of the directly referencing works. It needs two variables from the `.env` file:
 - `DATA_DIR`: The directory where to put the dataset. It will end up at `$DATA_DIR/citations.csv`.
 - `OPENALEX_EMAIL`: Optional, used in `find_citations.py`. Email adress to send along with API calls to OpenAlex. See: https://docs.openalex.org/how-to-use-the-api/rate-limits-and-authentication#the-polite-pool
 
-The dataset has the columns:
+In short, what the script does is:
+- Read the original dataset (the `van_de_Schoot_2018` dataset from Synergy)
+- Mark the records with the following 4 DOI's as excluded:
+    - "10.1037/a0020809"
+    - "10.1097/BCR.0b013e3181cb8ee6"
+    - "10.1007/s00520-015-2960-x"
+    - "10.1016/j.pain.2010.02.013"
+- For each of the included works, collect all works in OpenAlex that reference to it, and mark them as `primary`.
+- For each of the primary records, collect all works in OpenAlex that reference to it, and mark them as `secondary`.
+- Combine this into a single CSV file.
+
+This CSV file has the columns:
 - `id`: OpenAlex identifier.
 - `doi`
 - `title`
