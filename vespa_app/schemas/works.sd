@@ -17,4 +17,13 @@ schema works {
             }
         }
     }
+
+    rank-profile rank_docs inherits default {
+        inputs {
+            query(q) tensor<bfloat16>(x[384])
+        }
+        first-phase {
+            expression: closeness(embedding, q)
+        }
+    }
 }
