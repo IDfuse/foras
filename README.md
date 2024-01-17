@@ -89,3 +89,25 @@ For the `van_de_Schoot_2018` dataset this gives the following numbers at the tim
 |--------|-------|---------|-----------|
 | All    | 9016  | 465     | 8551      |
 | >=2015 | 8682  | 451     | 8231      |
+
+
+## Semantic Similarity Dataset
+The script `foras/query_database.py` can be used to query the vector database. It needs the following values from the `.env` file:
+- `VESPA_IP`: The ip-adress of the Vespa server.
+- `PORT`: The port on which the Vespa server is listening to queries.
+- `DATA_DIR`: The directory where to put the generated datasets.
+
+What the script does is:
+- Vectorize the included records of the original dataset, excluding 4 records (see the section on the citations dataset).
+- Query the database using each of these vectors and get the first 5000 results.
+- Save the responses together in one file: `included_records_response.parquet`
+- Vectorize the inclusion criteria (see https://www.crd.york.ac.uk/prospero/display_record.php?RecordID=494027, section 'Types of study to be included').
+- Query the database using this vector and get the first 5000 results.
+- Save the response in the file: `inclusion_criteria_response.parquet`
+
+The dataset `included_records_response.parquet` consists of 170000 records (5000 for each of the 34 included records), with the columns:
+- `query_id`: The full URL OpenAlex identifier of the query record.
+- `rank`: The rank of the response record (0 is the first result, 4999 the last).
+- `id`: The short OpenAlex identifier of the response record
+- `embedding`: The embedding of the response record. This is a list of 384 floats.
+The dataset `inclusion_criteria_response.parquet` has the same columns except the `query_id` column.
