@@ -92,6 +92,7 @@ For the `van_de_Schoot_2018` dataset this gives the following numbers at the tim
 
 
 ## Semantic Similarity Dataset
+### Querying the database
 The script `foras/query_database.py` can be used to query the vector database. It needs the following values from the `.env` file:
 - `VESPA_IP`: The ip-adress of the Vespa server.
 - `PORT`: The port on which the Vespa server is listening to queries.
@@ -111,3 +112,21 @@ The dataset `included_records_response.parquet` consists of 170000 records (5000
 - `id`: The short OpenAlex identifier of the response record
 - `embedding`: The embedding of the response record. This is a list of 384 floats.
 The dataset `inclusion_criteria_response.parquet` has the same columns except the `query_id` column.
+
+### Exploratory data analysis
+Some exploratory data analysis, done in the script `foras/data_exploration.py`.
+- Out of the 170000 records in `include_records_response.parquet`, there are 57232 unique records. So many records occur in the response for multiple queries.
+- You can see how many new records you get when using the top `N+1` ranked instead of the top `N` ranked records. That gives the following picture:
+
+![New record per rank](n_unique_at_rank.png)
+
+- You can see how much overlap there exists between the responses when querying with different records. That gives the following picture:
+
+![Overlap between queries](overlap_clustered.png)
+
+- If you include the top 427 of every record, you get exactly 7000 unique records.
+- If you include the top 10*427 of every record you get 50055 unique records.
+
+- `included_records_response.parquet` contains 4173 out of 5000 records of `inclusion_criteria_response.parquet`.
+- `included_records.response.parquet` contains 2871 our of 9016 records of `citations.csv` and 281 out of 465 primary citations.
+- `included_records_response.parquet` contains 315 records from the original dataset.
