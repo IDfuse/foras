@@ -1,8 +1,8 @@
+from pathlib import Path
+
 import matplotlib.pyplot as plt
 import pandas as pd
-from pathlib import Path
 import seaborn as sns
-
 
 OPENALEX_PREFIX = "https://openalex.org/"
 
@@ -77,7 +77,7 @@ for max_rank in range(5000):
     )
 
 dif_values = [0] + [
-    unique_records_by_rank[i+1] - unique_records_by_rank[i]
+    unique_records_by_rank[i + 1] - unique_records_by_rank[i]
     for i in range(len(unique_records_by_rank) - 1)
 ]
 pd.Series(dif_values, name="n_unique_values_at_rank").plot(
@@ -85,7 +85,7 @@ pd.Series(dif_values, name="n_unique_values_at_rank").plot(
     title="Unique records by rank",
     xlabel="Rank",
     ylabel="New records at rank",
-    figure=plt.figure()
+    figure=plt.figure(),
 ).get_figure().savefig("n_unique_at_rank.png")
 
 id_sets = {}
@@ -97,7 +97,7 @@ overlap_df = pd.DataFrame(
 )
 fig = sns.clustermap(overlap_df)
 fig.ax_row_dendrogram.set_visible(False)
-fig.ax_row_dendrogram.set_xlim([0,0])
+fig.ax_row_dendrogram.set_xlim([0, 0])
 fig.ax_col_dendrogram.set_visible(False)
 fig.savefig("overlap_clustered.png")
 
@@ -125,3 +125,55 @@ criteria_df[criteria_df.id.isin(citations_df.id)].id.nunique()
 primary_citations_df = citations_df[citations_df.level.eq("primary")]
 included_df[included_df.id.isin(primary_citations_df.id)].id.nunique()
 # 281
+
+
+# number of responses per record figure.
+df = pd.DataFrame(
+    [
+        (34, 4),
+        (33, 8),
+        (31, 24),
+        (29, 26),
+        (32, 29),
+        (30, 36),
+        (28, 38),
+        (25, 51),
+        (27, 56),
+        (26, 58),
+        (24, 66),
+        (23, 73),
+        (22, 86),
+        (21, 92),
+        (20, 116),
+        (19, 142),
+        (18, 151),
+        (17, 184),
+        (16, 210),
+        (15, 267),
+        (14, 313),
+        (13, 332),
+        (12, 409),
+        (11, 512),
+        (10, 610),
+        (9, 765),
+        (8, 856),
+        (7, 1117),
+        (6, 1431),
+        (5, 1786),
+        (4, 2505),
+        (3, 4085),
+        (2, 7944),
+        (1, 32850),
+    ],
+    columns=["n_responses", "n_records"],
+)
+sns.set(rc={'figure.figsize':(12,8)})
+fig = sns.barplot(data=df, x="n_responses", y="n_records")
+fig.set(
+    title="Number of responses containing a record",
+    xlabel="Number of responses",
+    ylabel="Number of records",
+)
+fig.get_figure().savefig("n_responses.png")
+fig.set(yscale="log")
+fig.get_figure().savefig("n_responses_log.png")
