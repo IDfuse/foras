@@ -1,3 +1,33 @@
+"""This script adds columns containing information on the ranking and recall of the
+semantic search methods.
+
+There are 3 search methods:
+- Search by included records. There were 34 included records, each of these was used as
+a query. This gave a list of 5000 results. There are 5 columns corresponding to this
+method. If the value in one of these columns is empty, it means that the record was in
+none of the 34 lists of 5000 records.
+    - inclusions_recall_data: List of dictionaries {"rank": integer, "query_id": integer}.
+    Here 'query_id' is the OpenAlex identifier of the original included record and 'rank'
+    is the position in the list.
+    - inclusions_min_rank: The lowest rank in any of the lists.
+    - inclusions_min_rank_id: The identifier of the query record that gave the lowest rank.
+    - inclusions_similarity: The cosine similarity between the vector of the record and
+    the vector of the closest query record. (This column is generated for all records)
+    - inclusions_most_similar: The identifier of the query record that is most similar 
+    to this record based on cosine similarity. (This column is generated for all records)
+- Search by the text of the inclusion criteria. This also gave a list of 5000 records.
+There are two columns corresponding to this method. 
+    - criteria_similarity: The cosine similarity between the vector of the record and
+    the vector of inclusion criteria. (This column is generated for all records)
+    - criteria_rank: The rank in the list of 5000 (if the record is in there).
+- Take the records from the 34 * 5000 records from method 1, train ASReview on the 34
+originally included records, and use it to rank all the records. There are two columns
+corresponding to this method. If the value is empty, this means that the record was not
+in the top 7000 as predicted by the model.
+    - logistic_score: The relevance score of that the model gave to this record.
+    - logistic_rank: The rank that the record has in the top 7000.
+"""  # noqa: E501
+
 import json
 from pathlib import Path
 
@@ -120,11 +150,11 @@ if __name__ == "__main__":
     inclusion_ids = inclusion_embeddings_df["id"].to_list()
     embeddings = np.array(embeddings_df["embedding"].to_list())
     cossim_matrix = cosine_similarity(embeddings, inclusion_embeddings)
-    labeled_data["inclusions_distance"] = cossim_matrix.max(axis=1)
-    labeled_data["inclusions_nearest"] = cossim_matrix.argmax(axis=1)
-    labeled_data["inclusions_nearest"] = labeled_data["inclusions_nearest"].apply(
-        lambda n: inclusion_ids[n]
-    )
+    labeled_data["inclusions_similarity"] = cossim_matrix.max(axis=1)
+    labeled_data["inclusions_most_similar"] = cossim_matrix.argmax(axis=1)
+    labeled_data["inclusions_most_similar"] = labeled_data[
+        "inclusions_most_similar"
+    ].apply(lambda n: inclusion_ids[n])
 
     criteria_embedding_fp = data_dir / "criteria_embedding.json"
     if criteria_embedding_fp.exists():
@@ -140,7 +170,7 @@ if __name__ == "__main__":
         criteria_embedding = model.encode([inclusion_criteria])[0]
         with open(criteria_embedding_fp, "w") as f:
             json.dump(criteria_embedding.tolist(), f)
-    labeled_data["criteria_distance"] = cosine_similarity(
+    labeled_data["criteria_similarity"] = cosine_similarity(
         embeddings, np.array(criteria_embedding).reshape(1, -1)
     )
     rank_mapping = pd.Series(
