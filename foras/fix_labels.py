@@ -28,9 +28,10 @@ df_included["in_motherfile"] = df_included.id.isin(motherfile.openalex_id.values
 
 output_dir = data_dir / "dataset_linking"
 motherfile.to_excel(output_dir / "motherfile.xlsx")
-df_logistic.to_csv(output_dir / "Data_3c_active_learning_total1000.csv")
-df_criteria.to_csv(output_dir / "Data_3a_inlusion_criteria.csv.csv")
-df_included.to_csv(output_dir / "Data_3b_includedrecords_top88.csv")
+df_logistic.to_excel(output_dir / "Data_3c_active_learning_total1000.xlsx")
+df_criteria["abstract"] = df_criteria.abstract.str.replace("\x02", "-")
+df_criteria.to_excel(output_dir / "Data_3a_inlusion_criteria.xlsx")
+df_included.to_excel(output_dir / "Data_3b_includedrecords_top88.xlsx")
 
 
 print(f"Logistic length: {len(df_logistic)}")
