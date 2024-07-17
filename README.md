@@ -130,3 +130,16 @@ Some exploratory data analysis, done in the script `foras/data_exploration.py`.
 - `included_records_response.parquet` contains 4173 out of 5000 records of `inclusion_criteria_response.parquet`.
 - `included_records.response.parquet` contains 2871 our of 9016 records of `citations.csv` and 281 out of 465 primary citations.
 - `included_records_response.parquet` contains 315 records from the original dataset.
+
+## License
+
+Shield: [![CC BY 4.0][cc-by-shield]][cc-by]
+
+This work is licensed under a
+[Creative Commons Attribution 4.0 International License][cc-by].
+
+[![CC BY 4.0][cc-by-image]][cc-by]
+
+[cc-by]: http://creativecommons.org/licenses/by/4.0/
+[cc-by-image]: https://i.creativecommons.org/l/by/4.0/88x31.png
+[cc-by-shield]: https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg
