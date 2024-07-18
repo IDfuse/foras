@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+title: 'Foras: Semantic Search in OpenAlex'
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Peter
+    family-names: Lombaers
+    affiliation: IDFuse / Utrecht University
+    orcid: 'https://orcid.org/0000-0002-8780-9376'
+  - given-names: Rens
+    family-names: van de Schoot
+    affiliation: Utrecht University
+    orcid: 'https://orcid.org/0000-0001-7736-2091'
+license: CC-BY-4.0
