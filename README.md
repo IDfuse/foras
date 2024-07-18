@@ -1,6 +1,6 @@
 [![CC BY 4.0][cc-by-shield]][cc-by]
 
-# Foras
+# Foras: Semantic Search in OpenAlex
 Create datasets for the FORAS project using OpenAlex
 
 ## Downloading the OpenAlex data
