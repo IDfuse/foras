@@ -13,4 +13,9 @@ authors:
     family-names: van de Schoot
     affiliation: Utrecht University
     orcid: 'https://orcid.org/0000-0001-7736-2091'
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.12771029
 license: CC-BY-4.0
+version: v1.0.0
+date-released: '2024-07-18'
