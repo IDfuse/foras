@@ -1,3 +1,5 @@
+[![CC BY 4.0][cc-by-shield]][cc-by]
+
 # Foras
 Create datasets for the FORAS project using OpenAlex
 
@@ -132,8 +134,6 @@ Some exploratory data analysis, done in the script `foras/data_exploration.py`.
 - `included_records_response.parquet` contains 315 records from the original dataset.
 
 ## License
-
-Shield: [![CC BY 4.0][cc-by-shield]][cc-by]
 
 This work is licensed under a
 [Creative Commons Attribution 4.0 International License][cc-by].
