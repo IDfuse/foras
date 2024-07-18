@@ -1,4 +1,4 @@
-[![CC BY 4.0][cc-by-shield]][cc-by]
+[![CC BY 4.0][cc-by-shield]][cc-by] [![DOI](https://zenodo.org/badge/716032662.svg)](https://zenodo.org/doi/10.5281/zenodo.12771028)
 
 # Foras: Semantic Search in OpenAlex
 Create datasets for the FORAS project using OpenAlex
