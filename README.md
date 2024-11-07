@@ -1,7 +1,9 @@
 [![CC BY 4.0][cc-by-shield]][cc-by] [![DOI](https://zenodo.org/badge/716032662.svg)](https://zenodo.org/doi/10.5281/zenodo.12771028)
 
 # Foras: Semantic Search in OpenAlex
-Create datasets for the FORAS project using OpenAlex
+Create datasets for the FORAS project using OpenAlex.
+
+All output datasets can be found at this [OSF Repository](https://doi.org/10.17605/OSF.IO/M32TS).
 
 ## Downloading the OpenAlex data
 To download the OpenAlex data on works, run `python foras/download_data.py` from the
