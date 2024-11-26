@@ -1,7 +1,7 @@
 [![CC BY 4.0][cc-by-shield]][cc-by] [![DOI](https://zenodo.org/badge/716032662.svg)](https://zenodo.org/doi/10.5281/zenodo.12771028)
 
 # Foras: Semantic Search in OpenAlex
-Create datasets for the FORAS project using OpenAlex.
+Create datasets for the FORAS project using OpenAlex; see the pre-registration at [PROSPERO](https://www.crd.york.ac.uk/prospero/display_record.php?RecordID=494027).
 
 All output datasets can be found at this [OSF Repository](https://doi.org/10.17605/OSF.IO/M32TS).
 
@@ -134,6 +134,10 @@ Some exploratory data analysis, done in the script `foras/data_exploration.py`.
 - `included_records_response.parquet` contains 4173 out of 5000 records of `inclusion_criteria_response.parquet`.
 - `included_records.response.parquet` contains 2871 our of 9016 records of `citations.csv` and 281 out of 465 primary citations.
 - `included_records_response.parquet` contains 315 records from the original dataset.
+
+## Funding
+
+The project was funded by the Dutch Research Council under grant no. [406.22.GO.048](https://app.dimensions.ai/details/grant/grant.13726450). 
 
 ## License
 
